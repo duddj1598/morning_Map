@@ -81,20 +81,21 @@ public class mainFrame extends JFrame {
 		JLabel [] weatherinfoLabel = new JLabel[7];
 		ImageIcon [] weatherimgIcon = new ImageIcon[7];
 		JLabel [] weatherimgLabel = new JLabel[7];
+
 		for (int i=0; i<7; i++){
 			weatherimgLabel[i] = new JLabel();
-			weatherimgIcon[i] = new ImageIcon(weatherimg[i]);
+			weatherimgIcon[i] = new ImageIcon(new java.net.URL(weatherimg[i]));
 		}
 		weatherinfoLabel[0] = new JLabel("현재 날씨 : " + weatherinfo[0]);
 		Label temperatureLabel = new Label("현재 온도 : " + temperature);
 		//날씨 이미지 추가
-		weatherimgLabel[0].setIcon(new ImageIcon(weatherimg[0]));
+		weatherimgLabel[0].setIcon(new ImageIcon(new java.net.URL(weatherimg[0])));
 		weatherinfoLabel[0].setSize(200, 30);
 		weatherinfoLabel[0].setLocation(200, 150);
 		temperatureLabel.setSize(200, 30);
 		temperatureLabel.setLocation(200, 180);
 		weatherimgLabel[0].setSize(100, 100);
-		weatherimgLabel[0].setLocation(240, 210);
+		weatherimgLabel[0].setLocation(220, 210);
 		nPanel.add(weatherinfoLabel[0]);
 		nPanel.add(temperatureLabel);
 		nPanel.add(weatherimgLabel[0]);

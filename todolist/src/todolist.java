@@ -1,46 +1,54 @@
 import org.json.simple.*;
 import org.json.simple.parser.*;
 import java.io.*;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.format.DateTimeFormatter;
 
-
-public class todolist{
-    private String [] todolist;
+public class todolist {
+    private String[] todolist;
     private JSONArray todolistarray;
-    private JSONObject jsonObject;
+
     todolist(String id) throws IOException, ParseException {
-        JSONParser parser = new JSONParser();
-        Reader reader = new FileReader("./src/user/user.json");
-        jsonObject = (JSONObject) parser.parse(reader);
-        JSONObject user = (JSONObject) jsonObject.get(id);
-        todolistarray = (JSONArray) user.get("todolist");
-        this.todolist = new String[todolistarray.size()];
-        for (int i = 0; i < todolistarray.size(); i++) {
-            JSONObject todo = (JSONObject) todolistarray.get(i);
-            this.todolist[i] = (String) todo.get("title");
+        fetchTodolistFromAPI(id);
+    }
+
+    private void fetchTodolistFromAPI(String id) throws IOException, ParseException {
+        String apiUrl = "http://127.0.0.1:8000/todolist/" + id;
+        URL url = new URL(apiUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("Accept", "application/json");
+
+        if (connection.getResponseCode() == 200) {
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder response = new StringBuilder();
+            String inputLine;
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            JSONParser parser = new JSONParser();
+            todolistarray = (JSONArray) parser.parse(response.toString());
+            this.todolist = new String[todolistarray.size()];
+            for (int i = 0; i < todolistarray.size(); i++) {
+                JSONObject todo = (JSONObject) todolistarray.get(i);
+                this.todolist[i] = (String) todo.get("title");
+            }
+        } else {
+            throw new IOException("Failed to fetch data from API. HTTP response code: " + connection.getResponseCode());
         }
     }
+
     public String[] getTodolist(String id) throws IOException, ParseException {
-        JSONParser parser = new JSONParser();
-        Reader reader = new FileReader("./src/user/user.json");
-        jsonObject = (JSONObject) parser.parse(reader);
-        JSONObject user = (JSONObject) jsonObject.get(id);
-        todolistarray = (JSONArray) user.get("todolist");
-        this.todolist = new String[todolistarray.size()];
-        for (int i = 0; i < todolistarray.size(); i++) {
-            JSONObject todo = (JSONObject) todolistarray.get(i);
-            this.todolist[i] = (String) todo.get("title");
-        }
+        fetchTodolistFromAPI(id);
         return this.todolist;
     }
-    public boolean[] getdone(String id) throws IOException, ParseException{
-        JSONParser parser = new JSONParser();
-        Reader reader = new FileReader("./src/user/user.json");
-        jsonObject = (JSONObject) parser.parse(reader);
-        JSONObject user = (JSONObject) jsonObject.get(id);
-        todolistarray = (JSONArray) user.get("todolist");
+
+    public boolean[] getdone(String id) throws IOException, ParseException {
+        fetchTodolistFromAPI(id);
         boolean[] done = new boolean[todolistarray.size()];
         for (int i = 0; i < todolistarray.size(); i++) {
             JSONObject todo = (JSONObject) todolistarray.get(i);
@@ -48,47 +56,16 @@ public class todolist{
         }
         return done;
     }
-    public void addTodolist(String title){
-        JSONObject newtodo = new JSONObject();
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String date = dtf.format(Time.get_today());
-        newtodo.put("title", title);
-        newtodo.put("date", date);
-        newtodo.put("done", false);
-        todolistarray.add(newtodo);
-        try {
-            FileWriter file = new FileWriter("./src/user/user.json");
-            file.write(jsonObject.toJSONString());
-            file.flush();
-            file.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+    public void addTodolist(String title) {
+        System.out.println("Adding a new todo is not supported directly via this client.");
     }
 
     public void checkTodolist(int finalI) {
-        JSONObject todo = (JSONObject) todolistarray.get(finalI);
-        todo.put("done", true);
-        try {
-            FileWriter file = new FileWriter("./src/user/user.json");
-            file.write(jsonObject.toJSONString());
-            file.flush();
-            file.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        System.out.println("Updating todo status is not supported directly via this client.");
     }
 
     public void uncheckTodolist(int finalI) {
-        JSONObject todo = (JSONObject) todolistarray.get(finalI);
-        todo.put("done", false);
-        try {
-            FileWriter file = new FileWriter("./src/user/user.json");
-            file.write(jsonObject.toJSONString());
-            file.flush();
-            file.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        System.out.println("Updating todo status is not supported directly via this client.");
     }
 }

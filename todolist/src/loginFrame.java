@@ -53,7 +53,7 @@ public class loginFrame extends JFrame {
 				// 로그인 버튼 클릭 시 user.json에서 아이디와 비밀번호 확인
 				JSONParser parser = new JSONParser();
 				try {
-					Reader reader = new FileReader("./src/user/user.json");
+					Reader reader = new FileReader("./user/user.json");
 					JSONObject jsonObject = (JSONObject) parser.parse(reader);
 					id = tf1.getText();
 					JSONObject user = (JSONObject) jsonObject.get(tf1.getText());

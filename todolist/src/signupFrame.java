@@ -61,10 +61,10 @@ public class signupFrame extends JFrame{
 				user.put("todolist", todolist);
 				JSONParser parser = new JSONParser();
 				try {
-					Reader reader = new FileReader("./src/user/user.json");
+					Reader reader = new FileReader("./user/user.json");
 					JSONObject jsonObject = (JSONObject) parser.parse(reader);
 					jsonObject.put(tf1.getText(), user);
-					FileWriter file = new FileWriter("./src/user/user.json");
+					FileWriter file = new FileWriter("./user/user.json");
 					file.write(jsonObject.toJSONString());
 					file.flush();
 					file.close();

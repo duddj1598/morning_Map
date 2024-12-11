@@ -169,36 +169,37 @@ public class api {
                     }
                 }
             }
+            String image_url = "http://127.0.0.1:8000/image/";
             for(int i=0; i<3; i++){
                 switch (pty[i]) {
                     case "0" -> {
                         switch (sky[i]) {
                             case "1" -> {
                                 weather[i] = "맑음";
-                                weatherimg[i] = "./img/sun.png";
+                                weatherimg[i] = image_url+"sun";
                             }
                             case "3" -> {
                                 weather[i] = "구름많음";
-                                weatherimg[i] = "./img/cloud.png";
+                                weatherimg[i] = image_url+"cloud";
                             }
                             case "4" -> {
                                 weather[i] = "흐림";
-                                weatherimg[i] = "./img/cloudy.png";
+                                weatherimg[i] = image_url+"cloudy";
                             }
                         }
                     }
 
                     case "1" -> {
                         weather[i] = "비";
-                        weatherimg[i] = "./img/rain.png";
+                        weatherimg[i] = image_url+"rain";
                     }
                     case "2" -> {
                         weather[i] = "비/눈";
-                        weatherimg[i] = "./img/rain_snow.png";
+                        weatherimg[i] = image_url+"rain_snow";
                     }
                     case "3" -> {
                         weather[i] = "눈";
-                        weatherimg[i] = "./img/snow.png";
+                        weatherimg[i] = image_url+"snow";
                     }
                     default -> weather[i] = "없음";
                 }
@@ -220,27 +221,27 @@ public class api {
                 weather[i] = (String) itemweather.get("wf"+(i+1)+"Am");
                 switch (weather[i]) {
                     case "맑음":
-                        weatherimg[i] = "./img/sun.png";
+                        weatherimg[i] = image_url+"sun";
                         break;
                     case "구름많음":
-                        weatherimg[i] = "./img/cloud.png";
+                        weatherimg[i] = image_url+"cloud";
                         break;
                     case "흐림":
-                        weatherimg[i] = "./img/cloudy.png";
+                        weatherimg[i] = image_url+"cloudy";
                         break;
                     case "구름많고 비":
                     case "흐리고 비":
                     case "구름많고 소나기":
                     case "소나기":
-                        weatherimg[i] = "./img/rain.png";
+                        weatherimg[i] = image_url+"rain";
                         break;
                     case "구름많고 눈":
                     case "흐리고 눈":
-                        weatherimg[i] = "./img/snow.png";
+                        weatherimg[i] = image_url+"snow";
                         break;
                     case "흐리고 비/눈":
                     case "구름많고 비/눈":
-                        weatherimg[i] = "./img/rain_snow.png";
+                        weatherimg[i] = image_url+"rain_snow";
                         break;
                 }
             }
@@ -303,12 +304,16 @@ class news_api{
             JSONParser parser = new JSONParser();
             JSONObject jsonResponsetwo = (JSONObject) parser.parse(response.body());
             JSONArray dataArray = (JSONArray) jsonResponsetwo.get("data");
-
             for (int i = 0; i < 2; i++) {
                 JSONObject item = (JSONObject) dataArray.get(i);
+                news_img[i] = (String) item.get("image_url");
+                if (news_img[i].equals("null")){
+                    i--;
+                    continue;
+                }
                 news_title[i] = (String) item.get("title");
                 news_url[i] = (String) item.get("content_url");
-                news_img[i] = (String) item.get("image_url");
+
             }
 
         } catch (Exception e) {
