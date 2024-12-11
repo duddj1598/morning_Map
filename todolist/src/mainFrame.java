@@ -152,7 +152,6 @@ public class mainFrame extends JFrame {
 
 		nPanel.add(weatherPanel);
 
-		//뉴스 패널
 		// 뉴스 패널
 		JPanel newsPanel = new JPanel();
 		newsPanel.setLayout(new GridLayout(1, 3, 10, 10)); // 3개의 뉴스 항목을 가로로 배치
@@ -211,7 +210,7 @@ public class mainFrame extends JFrame {
 			newsPanel.add(newsItem); // 뉴스 항목 패널에 추가
 		}
 
-// 뉴스 패널을 메인 패널에 추가
+		// 뉴스 패널을 메인 패널에 추가
 		nPanel.add(newsPanel);
 
 

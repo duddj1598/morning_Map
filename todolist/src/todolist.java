@@ -12,10 +12,10 @@ public class todolist {
 
     todolist(String id) throws IOException, ParseException {
         this.id = id;
-        fetchTodolistFromAPI();
+        update_todolist();
     }
 
-    private void fetchTodolistFromAPI() throws IOException, ParseException {
+    private void update_todolist() throws IOException, ParseException {
         String apiUrl = "http://127.0.0.1:8000/todolist/" + id;
         URL url = new URL(apiUrl);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -40,17 +40,17 @@ public class todolist {
                 this.todolist[i] = (String) todo.get("title");
             }
         } else {
-            throw new IOException("Failed to fetch data from API. HTTP response code: " + connection.getResponseCode());
+            throw new IOException("Failed. HTTP response code: " + connection.getResponseCode());
         }
     }
 
     public String[] getTodolist() throws IOException, ParseException {
-        fetchTodolistFromAPI();
+        update_todolist();
         return this.todolist;
     }
 
     public boolean[] getdone() throws IOException, ParseException {
-        fetchTodolistFromAPI();
+        update_todolist();
         boolean[] done = new boolean[todolistarray.size()];
         for (int i = 0; i < todolistarray.size(); i++) {
             JSONObject todo = (JSONObject) todolistarray.get(i);

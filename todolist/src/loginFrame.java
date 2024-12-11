@@ -52,7 +52,7 @@ public class loginFrame extends JFrame {
 		btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				id = tf1.getText();
-				String password = tf2.getText();
+				String password = signupFrame.getSHA256Hash(tf2.getText());
 				String url = "http://127.0.0.1:8000/login/" + id + "/" + password;
 
 				try {

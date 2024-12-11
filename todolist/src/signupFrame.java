@@ -4,8 +4,35 @@ import java.net.*;
 import javax.swing.*;
 import org.json.simple.*;
 import org.json.simple.parser.*;
+import java.security.*;
 
 public class signupFrame extends JFrame {
+
+	public static String getSHA256Hash(String data) {
+		try {
+			// MessageDigest 인스턴스를 SHA-256 알고리즘으로 초기화
+			MessageDigest digest = MessageDigest.getInstance("SHA-256");
+
+			// 데이터의 바이트 배열을 얻음
+			byte[] byteData = data.getBytes();
+
+			// 해시 값을 계산
+			byte[] hashBytes = digest.digest(byteData);
+
+			// 바이트 배열을 16진수 문자열로 변환
+			StringBuilder hexString = new StringBuilder();
+			for (byte b : hashBytes) {
+				String hex = Integer.toHexString(0xff & b);
+				if (hex.length() == 1) hexString.append('0');
+				hexString.append(hex);
+			}
+
+			return hexString.toString().toUpperCase();
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	signupFrame(loginFrame lf) {
 		super("회원가입");
 		setSize(400, 300);
@@ -55,7 +82,7 @@ public class signupFrame extends JFrame {
 		signUpButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String userId = tf1.getText();
-				String password = tf2.getText();
+				String password = getSHA256Hash(tf2.getText());
 				String url = "http://127.0.0.1:8000/register/" + userId + "/" + password;
 
 				try {
