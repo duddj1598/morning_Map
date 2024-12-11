@@ -304,16 +304,17 @@ class news_api{
             JSONParser parser = new JSONParser();
             JSONObject jsonResponsetwo = (JSONObject) parser.parse(response.body());
             JSONArray dataArray = (JSONArray) jsonResponsetwo.get("data");
+            int j = -1;
             for (int i = 0; i < 2; i++) {
-                JSONObject item = (JSONObject) dataArray.get(i);
+                j++;
+                JSONObject item = (JSONObject) dataArray.get(j);
                 news_img[i] = (String) item.get("image_url");
-                if (news_img[i].equals("null")){
+                if (news_img[i] == null) {
                     i--;
                     continue;
                 }
                 news_title[i] = (String) item.get("title");
                 news_url[i] = (String) item.get("content_url");
-
             }
 
         } catch (Exception e) {

@@ -2,6 +2,7 @@ import org.json.simple.*;
 import org.json.simple.parser.*;
 import java.awt.event.*;
 import java.io.*;
+import java.net.*;
 import javax.swing.*;
 
 public class loginFrame extends JFrame {
@@ -50,22 +51,44 @@ public class loginFrame extends JFrame {
 
 		btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// 로그인 버튼 클릭 시 user.json에서 아이디와 비밀번호 확인
-				JSONParser parser = new JSONParser();
+				id = tf1.getText();
+				String password = tf2.getText();
+				String url = "http://127.0.0.1:8000/login/" + id + "/" + password;
+
 				try {
-					Reader reader = new FileReader("./user/user.json");
-					JSONObject jsonObject = (JSONObject) parser.parse(reader);
-					id = tf1.getText();
-					JSONObject user = (JSONObject) jsonObject.get(tf1.getText());
-					if (user != null && user.get("password").equals(tf2.getText())) {
-						// 로그인 성공 시 mainFrame으로 전환
-						setVisible(false);
-						new mainFrame(id).setVisible(true);
+					// HTTP GET 요청 전송
+					HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+					connection.setRequestMethod("GET");
+					connection.setRequestProperty("Accept", "application/json");
+
+					int responseCode = connection.getResponseCode();
+					if (responseCode == 200) { // HTTP OK
+						BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+						StringBuilder response = new StringBuilder();
+						String line;
+						while ((line = in.readLine()) != null) {
+							response.append(line);
+						}
+						in.close();
+
+						// 응답 파싱
+						JSONParser parser = new JSONParser();
+						JSONObject jsonResponse = (JSONObject) parser.parse(response.toString());
+						boolean result = (boolean) jsonResponse.get("result");
+
+						if (result) {
+							// 로그인 성공 시 mainFrame으로 전환
+							setVisible(false);
+							new mainFrame(id).setVisible(true);
+						} else {
+							JOptionPane.showMessageDialog(null, "아이디 또는 비밀번호가 틀렸습니다.");
+						}
 					} else {
-						JOptionPane.showMessageDialog(null, "아이디 또는 비밀번호가 틀렸습니다.");
+						JOptionPane.showMessageDialog(null, "서버 오류가 발생했습니다.");
 					}
 				} catch (Exception e1) {
 					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null, "로그인 요청 중 오류가 발생했습니다.");
 				}
 			}
 		});

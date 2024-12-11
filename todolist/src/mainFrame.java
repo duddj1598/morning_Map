@@ -44,7 +44,7 @@ public class mainFrame extends JFrame {
 		super("모닝맵");
 		this.id = id;
 		todolist tdl = new todolist(id); // 'todolist' 객체
-		todolist = tdl.getTodolist(id);   // 초기화
+		todolist = tdl.getTodolist();   // 초기화
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(530, 800);
@@ -231,7 +231,7 @@ public class mainFrame extends JFrame {
 		// ToDoList 목록 및 완료 체크박스 추가
 		checkBox = new JCheckBox[todolist.length];
 		nPanel.setPreferredSize(new Dimension(500, 740 + 30 * todolist.length)); // 전체 길이
-		boolean[] done = tdl.getdone(id);
+		boolean[] done = tdl.getdone();
 		for (int i = 0; i < todolist.length; i++) {
 			//done이 true이면 체크박스에 체크
 			checkBox[i] = new JCheckBox(todolist[i]);
@@ -247,10 +247,14 @@ public class mainFrame extends JFrame {
 			checkBox[i].addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					if (checkBox[finalI].isSelected()) {
-						tdl.checkTodolist(finalI); // 체크 시 'done' true
-					} else {
-						tdl.uncheckTodolist(finalI); // 체크 해제 시 'done' false
+					try {
+						if (checkBox[finalI].isSelected()) {
+							tdl.checkTodolist(finalI); // 체크 시 'done' true
+						} else {
+							tdl.uncheckTodolist(finalI); // 체크 해제 시 'done' false
+						}
+					} catch (IOException ex) {
+						throw new RuntimeException(ex);
 					}
 				}
 			});
@@ -262,9 +266,9 @@ public class mainFrame extends JFrame {
 				String title = JOptionPane.showInputDialog("할 일을 입력하세요.");
 				//user.json다시 불러와서 todolist 갱신
 				if (title != null) {
-					tdl.addTodolist(title); // 새 할 일 추가
-                    try {
-                        todolist = tdl.getTodolist(id); // 갱신된 할 일 목록 가져오기
+					try {
+						tdl.addTodolist(title); // 새 할 일 추가
+                        todolist = tdl.getTodolist(); // 갱신된 할 일 목록 가져오기
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     } catch (ParseException ex) {
@@ -279,7 +283,7 @@ public class mainFrame extends JFrame {
 					checkBox = new JCheckBox[todolist.length];
 					nPanel.setPreferredSize(new Dimension(500, 740 + 30 * todolist.length)); // 전체 길이
 					try {
-						boolean[] done_new = tdl.getdone(id); // 예외 발생 가능 코드
+						boolean[] done_new = tdl.getdone(); // 예외 발생 가능 코드
 						for (int i = 0; i < todolist.length; i++) {
 							checkBox[i] = new JCheckBox(todolist[i]);
 							checkBox[i].setSize(300, 25);
@@ -293,10 +297,14 @@ public class mainFrame extends JFrame {
 							checkBox[i].addActionListener(new ActionListener() {
 								@Override
 								public void actionPerformed(ActionEvent e) {
-									if (checkBox[finalI].isSelected()) {
-										tdl.checkTodolist(finalI); // 체크 시 'done' true
-									} else {
-										tdl.uncheckTodolist(finalI); // 체크 해제 시 'done' false
+									try {
+										if (checkBox[finalI].isSelected()) {
+											tdl.checkTodolist(finalI); // 체크 시 'done' true
+										} else {
+											tdl.uncheckTodolist(finalI); // 체크 해제 시 'done' false
+										}
+									} catch (IOException ex) {
+										throw new RuntimeException(ex);
 									}
 								}
 							});

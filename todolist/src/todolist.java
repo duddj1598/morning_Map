@@ -8,12 +8,14 @@ import java.time.format.DateTimeFormatter;
 public class todolist {
     private String[] todolist;
     private JSONArray todolistarray;
+    private String id;
 
     todolist(String id) throws IOException, ParseException {
-        fetchTodolistFromAPI(id);
+        this.id = id;
+        fetchTodolistFromAPI();
     }
 
-    private void fetchTodolistFromAPI(String id) throws IOException, ParseException {
+    private void fetchTodolistFromAPI() throws IOException, ParseException {
         String apiUrl = "http://127.0.0.1:8000/todolist/" + id;
         URL url = new URL(apiUrl);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -42,13 +44,13 @@ public class todolist {
         }
     }
 
-    public String[] getTodolist(String id) throws IOException, ParseException {
-        fetchTodolistFromAPI(id);
+    public String[] getTodolist() throws IOException, ParseException {
+        fetchTodolistFromAPI();
         return this.todolist;
     }
 
-    public boolean[] getdone(String id) throws IOException, ParseException {
-        fetchTodolistFromAPI(id);
+    public boolean[] getdone() throws IOException, ParseException {
+        fetchTodolistFromAPI();
         boolean[] done = new boolean[todolistarray.size()];
         for (int i = 0; i < todolistarray.size(); i++) {
             JSONObject todo = (JSONObject) todolistarray.get(i);
@@ -57,15 +59,35 @@ public class todolist {
         return done;
     }
 
-    public void addTodolist(String title) {
-        System.out.println("Adding a new todo is not supported directly via this client.");
+    public void addTodolist(String title) throws IOException {
+        String apiUrl = "http://127.0.0.1:8000/todolist/" + id + "/" + title;
+        URL url = new URL(apiUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("Accept", "application/json");
+
+        if (connection.getResponseCode() != 200) {
+            throw new IOException("Failed to add todo. HTTP response code: " + connection.getResponseCode());
+        }
     }
 
-    public void checkTodolist(int finalI) {
-        System.out.println("Updating todo status is not supported directly via this client.");
+    public void updateTodolistDone(int todoId, boolean done) throws IOException {
+        String apiUrl = "http://127.0.0.1:8000/todolist/" + id + "/" + todoId + "/" + done;
+        URL url = new URL(apiUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("Accept", "application/json");
+
+        if (connection.getResponseCode() != 200) {
+            throw new IOException("Failed to update todo status. HTTP response code: " + connection.getResponseCode());
+        }
     }
 
-    public void uncheckTodolist(int finalI) {
-        System.out.println("Updating todo status is not supported directly via this client.");
+    public void checkTodolist(int todoId) throws IOException {
+        updateTodolistDone(todoId, true);
+    }
+
+    public void uncheckTodolist(int todoId) throws IOException {
+        updateTodolistDone(todoId, false);
     }
 }
